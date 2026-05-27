@@ -1,0 +1,47 @@
+# --- Secrets / env ---
+.env
+*.key
+*.pem
+service-account*.json
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# --- Local run logs / artifacts (NEVER commit real run data) ---
+data/runs/*
+!data/runs/.gitkeep
+
+# --- Real LynkMesh packs (keep only the sample fixture) ---
+data/context_packs/*
+!data/context_packs/sample_context_pack.json
+
+# --- REAL evidence must never be committed. Only *.example.json + README stay. ---
+evidence/historical/invoice/*
+evidence/historical/payment_proof/*
+evidence/historical/agreement/*
+evidence/historical/customer_redacted/*
+evidence/historical/manifest.json
+evidence/xprize_period/pilot_agreement/*
+evidence/xprize_period/invoice/*
+evidence/xprize_period/bank_transfer_proof/*
+evidence/xprize_period/customer/*
+evidence/xprize_period/manifest.json
+
+# keep folder placeholders + examples
+!**/.gitkeep
+!**/README.md
+!**/*.example.json
+
+# --- Real tenant data ---
+data/real/
+*.real.json
+evidence_private/
+*.log
+*.sqlite
+*.sqlite3
+cloudrun.env.yaml

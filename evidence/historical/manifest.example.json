@@ -1,0 +1,13 @@
+{
+  "category": "revenue_historical",
+  "claim": "A real BUMDes customer paid for Siskeu BUMDes platform development (pre-XPRIZE).",
+  "counts_as_xprize_revenue": false,
+  "currency": "IDR",
+  "items": [
+    {"type": "invoice_kuitansi", "file": "invoice/inv_redacted.pdf", "date": "2025-XX-XX", "redaction_status": "redacted"},
+    {"type": "payment_proof", "file": "payment_proof/transfer_redacted.png", "date": "2025-XX-XX", "redaction_status": "redacted"},
+    {"type": "agreement_scope", "file": "agreement/scope_redacted.pdf", "date": "2025-XX-XX", "redaction_status": "redacted"},
+    {"type": "customer", "file": "customer_redacted/customer.json", "redaction_status": "redacted"}
+  ],
+  "notes": "Historical paid development = traction / validated demand. Not XPRIZE-period revenue."
+}

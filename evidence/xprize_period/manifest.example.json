@@ -1,0 +1,16 @@
+{
+  "category": "revenue_xprize",
+  "offer": "AI-Assisted Monthly Closing & Report Briefing (pilot/add-on)",
+  "counts_as_xprize_revenue": true,
+  "arms_length": true,
+  "window_dated": true,
+  "currency": "IDR",
+  "items": [
+    {"type": "pilot_agreement", "file": "pilot_agreement/agreement_redacted.pdf", "date": "2026-XX-XX"},
+    {"type": "invoice", "file": "invoice/inv_001.pdf", "date": "2026-XX-XX"},
+    {"type": "bank_transfer_proof", "file": "bank_transfer_proof/transfer_redacted.png", "date": "2026-XX-XX"},
+    {"type": "customer", "file": "customer/customer.json", "redaction_status": "redacted"}
+  ],
+  "linked_run_ids": [],
+  "notes": "Tie this to real Agent-4 run_ids delivered to the pilot client."
+}

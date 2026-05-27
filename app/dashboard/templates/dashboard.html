@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Operations Evidence Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.5rem; color: #111; }
+    h1 { font-size: 1.2rem; }
+    h2 { font-size: 1rem; margin: 0 0 .25rem 0; }
+    .cards { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: .6rem .9rem; min-width: 120px; }
+    .card b { display: block; font-size: 1.4rem; }
+    table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+    th, td { border: 1px solid #e3e3e3; padding: .35rem .5rem; text-align: left; vertical-align: top; }
+    th { background: #f6f6f6; }
+    .ok { color: #1a7f37; } .fail { color: #b42318; } .pending { color: #9a6700; }
+    code { font-size: .8rem; }
+
+    /* LynkMesh Grounding Layer panel */
+    .grounding {
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 1.25rem 0;
+      background: #fafbfc;
+    }
+    .grounding .subtitle { color: #57606a; font-size: .85rem; margin: .1rem 0 .85rem 0; }
+    .grounding .safe-claim {
+      background: #fff;
+      border: 1px dashed #d0d7de;
+      border-radius: 6px;
+      padding: .55rem .7rem;
+      font-size: .8rem;
+      color: #24292f;
+      margin: .75rem 0 1rem 0;
+    }
+
+    /* legend */
+    .legend { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; margin-bottom: .85rem; }
+    .legend span {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .15rem .5rem; border-radius: 999px; border: 1px solid #d0d7de; background: #fff;
+    }
+    .dot { width: .65rem; height: .65rem; border-radius: 50%; display: inline-block; }
+    .dot-blue   { background: #2563eb; }
+    .dot-purple { background: #7c3aed; }
+    .dot-green  { background: #1a7f37; }
+    .dot-orange { background: #d97706; }
+    .dot-gray   { background: #9ca3af; }
+
+    /* node flow */
+    .flow {
+      display: flex; align-items: stretch; gap: .35rem;
+      flex-wrap: wrap;
+      margin: .25rem 0 1rem 0;
+    }
+    .node {
+      flex: 1 1 140px;
+      min-width: 140px;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      background: #fff;
+      padding: .55rem .65rem;
+      position: relative;
+    }
+    .node .role { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: #57606a; }
+    .node .title { font-weight: 600; font-size: .9rem; margin-top: .1rem; }
+    .node .meta { font-size: .75rem; color: #24292f; margin-top: .35rem; }
+    .node.blue   { border-color: #2563eb; }
+    .node.purple { border-color: #7c3aed; }
+    .node.green  { border-color: #1a7f37; }
+    .node.orange { border-color: #d97706; }
+    .node.gray   { border-color: #9ca3af; background: #f6f8fa; color: #57606a; }
+
+    .arrow {
+      align-self: center;
+      width: 36px; height: 4px;
+      background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #1a7f37 100%);
+      background-size: 200% 100%;
+      border-radius: 2px;
+      animation: flow-pulse 2.4s linear infinite;
+      opacity: .85;
+    }
+    @keyframes flow-pulse {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* facts grid */
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: .4rem .9rem;
+      font-size: .82rem;
+      margin-top: .25rem;
+    }
+    .facts div { border-bottom: 1px dotted #e3e3e3; padding: .2rem 0; }
+    .facts div span.k { color: #57606a; display: inline-block; min-width: 9.5rem; }
+    .facts div span.v code { word-break: break-all; }
+
+    .empty {
+      font-size: .85rem;
+      color: #57606a;
+      padding: .75rem;
+      background: #fff;
+      border: 1px dashed #d0d7de;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Operations Evidence Dashboard <small>(ugly on purpose &mdash; logs are the point)</small></h1>
+  <div class="cards">
+    <div class="card"><b>{{ summary.total_runs }}</b>total runs</div>
+    <div class="card"><b class="ok">{{ summary.succeeded }}</b>succeeded</div>
+    <div class="card"><b class="fail">{{ summary.failed }}</b>failed</div>
+    <div class="card"><b>{{ summary.reviewed }}</b>human-reviewed</div>
+    <div class="card"><b>{{ summary.approved }}</b>approved</div>
+    <div class="card"><b>{{ summary.total_gemini_tokens }}</b>Gemini tokens</div>
+    <div class="card"><b>{{ summary.distinct_context_packs }}</b>LynkMesh packs</div>
+  </div>
+
+  {# ----- LynkMesh Grounding Layer panel ----- #}
+  {% set lm = (latest_run.lynkmesh if latest_run else {}) or {} %}
+  {% set gem = (latest_run.gemini if latest_run else {}) or {} %}
+  {% set review = (latest_run.human_review if latest_run else {}) or {} %}
+  {% set review_status = review.get('status', 'pending') if review else 'pending' %}
+  {% set result_status = (latest_run.result_status if latest_run else None) %}
+
+  {% macro show(v) -%}
+    {% if v is none or v == '' %}<em style="color:#9ca3af">not recorded</em>{% else %}<code>{{ v }}</code>{% endif %}
+  {%- endmacro %}
+
+  <section class="grounding" aria-label="LynkMesh Grounding Layer">
+    <h2>LynkMesh Grounding Layer</h2>
+    <div class="subtitle">Deterministic software/domain context that grounds Gemini explanations.</div>
+
+    <div class="legend">
+      <span><i class="dot dot-blue"></i>blue = deterministic LynkMesh facts</span>
+      <span><i class="dot dot-purple"></i>purple = Gemini generation</span>
+      <span><i class="dot dot-green"></i>green = human approved</span>
+      <span><i class="dot dot-orange"></i>orange = caveat / watch item</span>
+      <span><i class="dot dot-gray"></i>gray = unavailable</span>
+    </div>
+
+    <div class="flow">
+      <div class="node {{ 'blue' if latest_run else 'gray' }}">
+        <div class="role">1 &middot; input</div>
+        <div class="title">Report Input</div>
+        <div class="meta">
+          {% if latest_run %}
+            period {{ show(latest_run.period) }}<br/>
+            tenant {{ show(latest_run.tenant_ref) }}
+          {% else %}no run yet{% endif %}
+        </div>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+
+      <div class="node {{ 'blue' if lm else 'gray' }}">
+        <div class="role">2 &middot; machine-verifiable context: LynkMesh</div>
+        <div class="title">LynkMesh Grounding Layer</div>
+        <div class="meta">
+          pack {{ show((lm.get('context_pack_id') or '')[:12]) }}<br/>
+          {% if lm.get('token_estimate') %}~{{ lm.get('token_estimate') }} tokens{% else %}token estimate {{ show(none) }}{% endif %}
+        </div>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+
+      <div class="node {{ 'purple' if gem else 'gray' }}">
+        <div class="role">3 &middot; ai-generated explanation: gemini</div>
+        <div class="title">Gemini Explanation</div>
+        <div class="meta">
+          {% if gem %}
+            model {{ show(gem.get('model')) }}{% if gem.get('is_stub') %} <em style="color:#d97706">(stub)</em>{% endif %}<br/>
+            tokens {{ show(gem.get('total_tokens')) }}
+          {% else %}no Gemini call recorded{% endif %}
+        </div>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+
+      <div class="node {{ 'orange' if result_status == 'failed' else ('blue' if latest_run else 'gray') }}">
+        <div class="role">4 &middot; audit trail</div>
+        <div class="title">ExecutionLog</div>
+        <div class="meta">
+          {% if latest_run %}
+            run {{ show((latest_run.run_id or '')[:8]) }}<br/>
+            status
+            {% if result_status == 'succeeded' %}<span class="ok">{{ result_status }}</span>
+            {% elif result_status == 'failed' %}<span class="fail">{{ result_status }}</span>
+            {% else %}<span class="pending">{{ result_status or 'unknown' }}</span>{% endif %}
+          {% else %}—{% endif %}
+        </div>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+
+      {% set review_color = 'green' if review_status == 'approved'
+                          else ('orange' if review_status in ('rejected','edited')
+                          else ('blue' if latest_run else 'gray')) %}
+      <div class="node {{ review_color }}">
+        <div class="role">5 &middot; final approval: human operator</div>
+        <div class="title">Human Review</div>
+        <div class="meta">
+          status
+          {% if review_status == 'approved' %}<span class="ok">{{ review_status }}</span>
+          {% elif review_status in ('rejected','edited') %}<span class="fail">{{ review_status }}</span>
+          {% else %}<span class="pending">{{ review_status }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if latest_run %}
+      <div class="facts" aria-label="latest run grounding facts">
+        <div><span class="k">context_pack_id</span><span class="v">{{ show((lm.get('context_pack_id') or '')[:24]) }}</span></div>
+        <div><span class="k">graph_id</span><span class="v">{{ show(lm.get('graph_id')) }}</span></div>
+        <div><span class="k">build_id</span><span class="v">{{ show(lm.get('build_id')) }}</span></div>
+        <div><span class="k">schema_version</span><span class="v">{{ show(lm.get('schema_version')) }}</span></div>
+        <div><span class="k">generator_version</span><span class="v">{{ show(lm.get('generator_version')) }}</span></div>
+        <div><span class="k">token_estimate</span><span class="v">{{ show(lm.get('token_estimate')) }}</span></div>
+        <div><span class="k">Gemini model</span><span class="v">{{ show(gem.get('model')) }}</span></div>
+        <div><span class="k">Gemini tokens</span><span class="v">{{ show(gem.get('total_tokens')) }}</span></div>
+        <div><span class="k">run_id (prefix)</span><span class="v">{{ show((latest_run.run_id or '')[:8]) }}</span></div>
+        <div><span class="k">human review</span><span class="v">{{ show(review_status) }}</span></div>
+        <div><span class="k">result status</span><span class="v">{{ show(result_status) }}</span></div>
+      </div>
+    {% else %}
+      <div class="empty">Run the Monthly Report Explanation Assistant to generate a grounding trace.</div>
+    {% endif %}
+
+    <div class="safe-claim">
+      LynkMesh provides deterministic, compact context used to ground this Gemini workflow.
+      Gemini generates the explanation, and a human operator approves the result.
+    </div>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th>created_at</th><th>agent</th><th>period</th><th>status</th>
+        <th>review</th><th>model</th><th>tokens</th>
+        <th>context_pack_id</th><th>prompt</th><th>run_id</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in runs %}
+      <tr>
+        <td>{{ r.created_at }}</td>
+        <td>{{ r.agent_name }} v{{ r.agent_version }}</td>
+        <td>{{ r.period }}</td>
+        <td class="{{ 'ok' if r.result_status == 'succeeded' else 'fail' }}">{{ r.result_status }}</td>
+        <td class="pending">{{ (r.human_review or {}).get('status', '-') }}</td>
+        <td>{{ (r.gemini or {}).get('model', '-') }}{% if (r.gemini or {}).get('is_stub') %} (stub){% endif %}</td>
+        <td>{{ (r.gemini or {}).get('total_tokens', '-') }}</td>
+        <td><code>{{ (r.lynkmesh or {}).get('context_pack_id', '-')[:16] }}</code></td>
+        <td><code>{{ r.prompt.prompt_id }}.{{ r.prompt.prompt_version }}</code></td>
+        <td><code>{{ r.run_id[:8] }}</code></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

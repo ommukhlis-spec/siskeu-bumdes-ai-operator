@@ -1,0 +1,44 @@
+{
+  "mesh_context_ai_pack_schema_version": "mesh_context_ai_pack.v0.1",
+  "source_mesh_context_schema_version": "0.1.0",
+  "note": "SAMPLE FIXTURE. Mirrors the real LynkMesh AI context pack shape. The graph statistics and identity below were produced by a real deterministic LynkMesh build of the Siskeu BUMDes codebase; 'domain_modules' is a curated enrichment for grounding and is not auto-populated by LynkMesh v0.1.",
+  "ai_context_pack": {
+    "project_identity": {
+      "display_name": "siskeu_bumdes",
+      "content_hash": "f9f1a6f2b0d3240b4cd88759251d1dc33f1e9cda4e761fe9405ca1fbc8b75357",
+      "graph_id": "ad5a0df4-11bf-5578-bbc7-54b84e4e3110",
+      "build_id": "3f94d80e-d0ea-403c-b419-3696c85de235",
+      "generator_version": "4.4.1",
+      "profile": "balanced"
+    },
+    "context_budget": {
+      "estimated_input_tokens": 609,
+      "profile": "balanced"
+    },
+    "executive_context": {
+      "node_count": 1108,
+      "edge_count": 2400,
+      "node_type_breakdown": {"class": 139, "method": 626, "file": 282, "function": 35, "external": 26},
+      "edge_type_breakdown": {"calls_confirmed": 645, "calls_external": 192, "calls_heuristic": 137, "contains": 626, "defined_in": 800}
+    },
+    "architecture_context": {
+      "layers": ["controller", "service", "model", "middleware"],
+      "dominant_components": [
+        {"type": "method", "count": 626},
+        {"type": "file", "count": 282},
+        {"type": "class", "count": 139}
+      ]
+    },
+    "domain_modules": {
+      "reporting": ["ReportDataService", "BalanceSheetService", "IncomeStatementService", "EquityReportService", "TrialBalanceService", "ReportExportController"],
+      "ledger": ["AccountingService", "LedgerService", "ChartOfAccount", "JournalEntry", "AccountingPeriod", "PeriodClosingModel"],
+      "approval": ["ApprovalService", "ApprovalController"],
+      "audit": ["AuditLogService", "TransactionAuditService"]
+    },
+    "guardrails": {
+      "contains_llm_inference": false,
+      "deterministic_facts_only": true,
+      "do_not_infer_business_logic_without_evidence": true
+    }
+  }
+}

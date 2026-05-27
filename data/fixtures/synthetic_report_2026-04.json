@@ -1,0 +1,51 @@
+{
+  "period": "2026-04",
+  "tenant": {
+    "tenant_name": "BUMDes Contoh Sejahtera (SYNTHETIC)",
+    "village": "Desa Contoh",
+    "operator_name": "Bendahara Synthetic",
+    "contact_email": "synthetic@example.test"
+  },
+  "currency": "IDR",
+  "data_classification": "synthetic",
+  "income_statement": {
+    "revenue": 45200000,
+    "cost_of_goods_sold": 21500000,
+    "operating_expenses": 9800000,
+    "net_income": 13900000,
+    "prev_month_net_income": 11200000
+  },
+  "balance_sheet": {
+    "assets": {
+      "cash": 38500000,
+      "receivables": 7200000,
+      "inventory": 12400000,
+      "fixed_assets_net": 64000000,
+      "total_assets": 122100000
+    },
+    "liabilities": {
+      "payables": 5400000,
+      "short_term_debt": 8000000,
+      "total_liabilities": 13400000
+    },
+    "equity": {
+      "village_capital": 95000000,
+      "retained_earnings": 13700000,
+      "total_equity": 108700000
+    }
+  },
+  "trial_balance": {
+    "total_debit": 135500000,
+    "total_credit": 135500000,
+    "balanced": true
+  },
+  "units": [
+    {"name": "Unit Air Bersih", "net_income": 5200000},
+    {"name": "Unit Simpan Pinjam", "net_income": 6100000},
+    {"name": "Unit Toko Desa", "net_income": 2600000}
+  ],
+  "flags": {
+    "unposted_drafts": 1,
+    "missing_opening_balance_accounts": 0
+  }
+}
