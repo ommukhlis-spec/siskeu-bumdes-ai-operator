@@ -89,3 +89,100 @@ pytest -q
 ## Layout
 
 See `ARCHITECTURE.md`.
+
+## Gemini Runtime Mode
+
+The Siskeu BUMDes AI Operator supports two Gemini runtime modes.
+
+### 1. Production / Evidence Mode — Vertex AI Gemini Live
+
+For XPRIZE product-running evidence, the application runs Gemini through Vertex AI using Application Default Credentials or the Cloud Run service account.
+
+Required environment variables:
+
+```env
+GEMINI_MODE=vertex
+GOOGLE_GENAI_USE_VERTEXAI=true
+GOOGLE_CLOUD_PROJECT=project-2501f30e-d2bc-4988-ada
+GOOGLE_CLOUD_LOCATION=asia-southeast1
+GEMINI_MODEL=gemini-2.5-flash
+REPORT_SOURCE=synthetic
+```
+
+A successful live evidence run records:
+
+```json
+{
+  "model": "gemini-2.5-flash",
+  "is_stub": false,
+  "prompt_tokens": "> 0",
+  "candidates_tokens": "> 0",
+  "total_tokens": "> 0",
+  "latency_ms": "> 0",
+  "response_id": "live Gemini response id"
+}
+```
+
+The dashboard distinguishes live Gemini runs from local/development stub runs.
+
+### 2. Local / CI Stub Mode
+
+Stub mode is retained for local development, offline testing, and CI when no live Gemini credentials are configured.
+
+Stub mode is active when neither Vertex AI mode nor an API key is configured. Stub runs are clearly marked with:
+
+```json
+{
+  "is_stub": true,
+  "response_id": "stub"
+}
+```
+
+Stub runs are not used as final XPRIZE product-running evidence.
+
+## Evidence Workflow
+
+The submitted evidence workflow is:
+
+```text
+Synthetic or redacted BUMDes report input
+? LynkMesh context pack
+? Vertex AI Gemini live briefing
+? ExecutionLog
+? Human review approval
+? Evidence dashboard
+```
+
+The AI explains, checks, and proposes. Human operators approve final financial decisions. The system does not automatically post ledger entries and does not claim fully autonomous accounting.
+
+## Local Live Gemini Run
+
+Use this local command sequence to run with Vertex AI Gemini:
+
+```powershell
+$env:GEMINI_MODE="vertex"
+$env:GOOGLE_GENAI_USE_VERTEXAI="true"
+$env:GOOGLE_CLOUD_PROJECT="project-2501f30e-d2bc-4988-ada"
+$env:GOOGLE_CLOUD_LOCATION="asia-southeast1"
+$env:GEMINI_MODEL="gemini-2.5-flash"
+$env:GEMINI_FORCE_MINIMAL=""
+$env:GEMINI_DEBUG=""
+$env:REPORT_EXPLAINER_DEBUG=""
+
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8080
+```
+
+Then validate:
+
+```powershell
+curl.exe http://127.0.0.1:8080/version
+curl.exe http://127.0.0.1:8080/debug/gemini
+```
+
+Expected runtime evidence:
+
+```text
+stub_mode=false
+gemini_model=gemini-2.5-flash
+google_cloud_location=asia-southeast1
+```
