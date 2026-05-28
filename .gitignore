@@ -45,3 +45,7 @@ evidence_private/
 *.sqlite
 *.sqlite3
 cloudrun.env.yaml
+
+# Local debug artifacts
+evidence/internal_debug_archive/
+
