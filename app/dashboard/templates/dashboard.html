@@ -2,260 +2,250 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AI Operations Evidence Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Siskeu BUMDes AI Operator — Interactive Evidence Console</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 1.5rem; color: #111; }
-    h1 { font-size: 1.2rem; }
-    h2 { font-size: 1rem; margin: 0 0 .25rem 0; }
-    .cards { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
-    .card { border: 1px solid #ddd; border-radius: 8px; padding: .6rem .9rem; min-width: 120px; }
-    .card b { display: block; font-size: 1.4rem; }
-    table { border-collapse: collapse; width: 100%; font-size: .85rem; }
-    th, td { border: 1px solid #e3e3e3; padding: .35rem .5rem; text-align: left; vertical-align: top; }
-    th { background: #f6f6f6; }
-    .ok { color: #1a7f37; } .fail { color: #b42318; } .pending { color: #9a6700; }
-    code { font-size: .8rem; }
-
-    /* LynkMesh Grounding Layer panel */
-    .grounding {
-      border: 1px solid #d0d7de;
-      border-radius: 10px;
-      padding: 1rem 1.1rem;
-      margin: 1.25rem 0;
-      background: #fafbfc;
+    :root {
+      --bg:#f4f7fb; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#dbe4ef;
+      --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626; --purple:#7c3aed;
+      --shadow:0 14px 35px rgba(15,23,42,.08); --r:18px;
     }
-    .grounding .subtitle { color: #57606a; font-size: .85rem; margin: .1rem 0 .85rem 0; }
-    .grounding .safe-claim {
-      background: #fff;
-      border: 1px dashed #d0d7de;
-      border-radius: 6px;
-      padding: .55rem .7rem;
-      font-size: .8rem;
-      color: #24292f;
-      margin: .75rem 0 1rem 0;
-    }
-
-    /* legend */
-    .legend { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; margin-bottom: .85rem; }
-    .legend span {
-      display: inline-flex; align-items: center; gap: .35rem;
-      padding: .15rem .5rem; border-radius: 999px; border: 1px solid #d0d7de; background: #fff;
-    }
-    .dot { width: .65rem; height: .65rem; border-radius: 50%; display: inline-block; }
-    .dot-blue   { background: #2563eb; }
-    .dot-purple { background: #7c3aed; }
-    .dot-green  { background: #1a7f37; }
-    .dot-orange { background: #d97706; }
-    .dot-gray   { background: #9ca3af; }
-
-    /* node flow */
-    .flow {
-      display: flex; align-items: stretch; gap: .35rem;
-      flex-wrap: wrap;
-      margin: .25rem 0 1rem 0;
-    }
-    .node {
-      flex: 1 1 140px;
-      min-width: 140px;
-      border: 1px solid #d0d7de;
-      border-radius: 8px;
-      background: #fff;
-      padding: .55rem .65rem;
-      position: relative;
-    }
-    .node .role { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: #57606a; }
-    .node .title { font-weight: 600; font-size: .9rem; margin-top: .1rem; }
-    .node .meta { font-size: .75rem; color: #24292f; margin-top: .35rem; }
-    .node.blue   { border-color: #2563eb; }
-    .node.purple { border-color: #7c3aed; }
-    .node.green  { border-color: #1a7f37; }
-    .node.orange { border-color: #d97706; }
-    .node.gray   { border-color: #9ca3af; background: #f6f8fa; color: #57606a; }
-
-    .arrow {
-      align-self: center;
-      width: 36px; height: 4px;
-      background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #1a7f37 100%);
-      background-size: 200% 100%;
-      border-radius: 2px;
-      animation: flow-pulse 2.4s linear infinite;
-      opacity: .85;
-    }
-    @keyframes flow-pulse {
-      0%   { background-position: 100% 0; }
-      100% { background-position: -100% 0; }
-    }
-
-    /* facts grid */
-    .facts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: .4rem .9rem;
-      font-size: .82rem;
-      margin-top: .25rem;
-    }
-    .facts div { border-bottom: 1px dotted #e3e3e3; padding: .2rem 0; }
-    .facts div span.k { color: #57606a; display: inline-block; min-width: 9.5rem; }
-    .facts div span.v code { word-break: break-all; }
-
-    .empty {
-      font-size: .85rem;
-      color: #57606a;
-      padding: .75rem;
-      background: #fff;
-      border: 1px dashed #d0d7de;
-      border-radius: 6px;
-    }
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top left,#dbeafe 0,transparent 28rem),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+    .wrap{width:min(1440px,calc(100% - 32px));margin:0 auto;padding:18px 0 38px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:22px;padding:12px 14px;box-shadow:0 3px 16px rgba(15,23,42,.06);backdrop-filter:blur(12px)}
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1e3a8a,#2563eb,#059669);color:#fff;font-weight:900}.brand b{display:block}.brand span{display:block;color:var(--muted);font-size:12px}.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:700;color:#334155}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px}
+    .hero{margin-top:18px;border-radius:28px;padding:28px;background:linear-gradient(135deg,#0f2a43,#2545b8 55%,#15a37b);color:#fff;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.8fr);gap:18px}.hero h1{font-size:clamp(30px,4vw,54px);letter-spacing:-.06em;line-height:1;margin:12px 0}.hero p{max-width:780px;color:rgba(255,255,255,.82);line-height:1.7}.eyebrow{display:inline-block;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.13);padding:7px 10px;font-size:12px;font-weight:900;text-transform:uppercase}.latest{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.14);border-radius:22px;padding:18px;backdrop-filter:blur(12px)}.latest .big{font-size:30px;font-weight:900}.kv{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.2);padding-top:10px;margin-top:10px;font-size:13px}.kv strong{text-align:right}
+    .grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(8,minmax(130px,1fr));margin-top:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 2px 12px rgba(15,23,42,.05)}.card small{display:block;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.06em;font-size:11px}.card b{display:block;margin-top:8px;font-size:28px;letter-spacing:-.04em}.hint{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
+    .two{grid-template-columns:1.05fr .95fr;margin-top:16px}.panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 18px 12px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fff,#f8fafc)}.panel h2{margin:0;font-size:18px}.panel p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.55}.panel-body{padding:18px}
+    .form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:#475569;margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:10px 11px;font:inherit;font-size:14px;background:#fff}.field textarea{min-height:84px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.btn{border:0;border-radius:14px;padding:11px 14px;font-weight:850;cursor:pointer}.btn-primary{background:var(--blue);color:#fff}.btn-secondary{background:#e2e8f0;color:#0f172a}.btn-success{background:var(--green);color:#fff}.btn:disabled{opacity:.55;cursor:not-allowed}.preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.preview-item{border:1px solid var(--line);border-radius:14px;background:#f8fafc;padding:12px}.preview-item span{display:block;color:var(--muted);font-size:12px;font-weight:800}.preview-item b{display:block;margin-top:5px;font-size:20px}.result{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:#f8fafc;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.55;max-height:320px;overflow:auto}.loading{color:var(--amber);font-weight:800}.ok{color:var(--green)}.fail{color:var(--red)}
+    .boundaries{grid-template-columns:repeat(5,minmax(160px,1fr));margin-top:16px}.boundary strong{display:block;margin-top:6px}.flow{display:grid;grid-template-columns:1fr 38px 1fr 38px 1fr 38px 1fr 38px 1fr;gap:6px;align-items:center}.node{min-height:134px;border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:16px;background:#fff;padding:13px}.node.purple{border-top-color:var(--purple)}.node.green{border-top-color:var(--green)}.node.amber{border-top-color:var(--amber)}.node.gray{border-top-color:#94a3b8;background:#f8fafc}.node .role{font-size:11px;color:#64748b;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.node .title{font-weight:900;margin-top:6px}.node .meta{margin-top:8px;font-size:12px;line-height:1.7;color:#334155}.arrow{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));background-size:220% 100%;animation:flow 2.7s linear infinite}@keyframes flow{0%{background-position:100% 0}100%{background-position:-120% 0}}
+    .facts{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:10px;margin-top:14px}.fact{border:1px solid var(--line);border-radius:15px;background:#f8fafc;padding:12px}.fact span{display:block;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.06em}.fact code,td code,.latest code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#eef2ff;border:1px solid #dbe4ff;border-radius:7px;padding:2px 5px;font-size:12px;word-break:break-all}.safe{margin-top:14px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:16px;padding:13px;line-height:1.55;font-size:13px}
+    .badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;border:1px solid}.badge:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.b-ok{color:#047857;background:#d1fae5;border-color:#a7f3d0}.b-pending{color:#b45309;background:#fef3c7;border-color:#fde68a}.b-fail{color:#b91c1c;background:#fee2e2;border-color:#fecaca}.b-info{color:#1d4ed8;background:#dbeafe;border-color:#bfdbfe}.b-muted{color:#64748b;background:#f1f5f9;border-color:#e2e8f0}
+    .table{margin-top:16px}.table-scroll{overflow:auto}table{width:100%;min-width:1080px;border-collapse:separate;border-spacing:0;font-size:13px}th{background:#f8fafc;color:#475569;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:12px;border-bottom:1px solid var(--line)}td{padding:12px;border-bottom:1px solid #eef2f7;vertical-align:top}tr:hover td{background:#f8fafc}.sub{display:block;color:var(--muted);font-size:12px;margin-top:3px}.note{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;color:#475569;font-size:13px;line-height:1.6}
+    @media(max-width:1180px){.hero,.two{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(4,1fr)}.boundaries{grid-template-columns:repeat(2,1fr)}.flow{grid-template-columns:1fr}.arrow{width:4px;height:34px;justify-self:center;background:linear-gradient(180deg,var(--blue),var(--purple),var(--green));background-size:100% 220%}.facts{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:720px){.wrap{width:calc(100% - 16px)}.top{align-items:flex-start;flex-direction:column}.form,.preview,.kpis,.boundaries,.facts{grid-template-columns:1fr}.hero{padding:20px}.hero h1{font-size:34px}}
   </style>
 </head>
 <body>
-  <h1>AI Operations Evidence Dashboard <small>(ugly on purpose &mdash; logs are the point)</small></h1>
-  <div class="cards">
-    <div class="card"><b>{{ summary.total_runs }}</b>total runs</div>
-    <div class="card"><b class="ok">{{ summary.succeeded }}</b>succeeded</div>
-    <div class="card"><b class="fail">{{ summary.failed }}</b>failed</div>
-    <div class="card"><b>{{ summary.reviewed }}</b>human-reviewed</div>
-    <div class="card"><b>{{ summary.approved }}</b>approved</div>
-    <div class="card"><b>{{ summary.total_gemini_tokens }}</b>Gemini tokens</div>
-    <div class="card"><b>{{ summary.distinct_context_packs }}</b>LynkMesh packs</div>
-  </div>
+{% set latest = latest_run %}
+{% set lm = latest.lynkmesh if latest else {} %}
+{% set gem = latest.gemini if latest else {} %}
+{% set review = latest.human_review if latest else {} %}
+{% set prompt = latest.prompt if latest else {} %}
+{% set review_status = review.status | default('pending', true) %}
+{% set result_status = latest.result_status | default('no-run', true) if latest else 'no-run' %}
+{% macro code(v,n=999) -%}{% if v is undefined or v is none or v == '' %}<span class="sub">not recorded</span>{% else %}<code>{{ (v|string)[:n] }}</code>{% endif %}{%- endmacro %}
+{% macro badge(s) -%}{% set x=s|default('unknown',true) %}{% if x in ['succeeded','approved'] %}<span class="badge b-ok">{{x}}</span>{% elif x in ['failed','rejected'] %}<span class="badge b-fail">{{x}}</span>{% elif x in ['pending','edited'] %}<span class="badge b-pending">{{x}}</span>{% elif x in ['no-run','synthetic','redacted'] %}<span class="badge b-info">{{x}}</span>{% else %}<span class="badge b-muted">{{x}}</span>{% endif %}{%- endmacro %}
 
-  {# ----- LynkMesh Grounding Layer panel ----- #}
-  {% set lm = (latest_run.lynkmesh if latest_run else {}) or {} %}
-  {% set gem = (latest_run.gemini if latest_run else {}) or {} %}
-  {% set review = (latest_run.human_review if latest_run else {}) or {} %}
-  {% set review_status = review.get('status', 'pending') if review else 'pending' %}
-  {% set result_status = (latest_run.result_status if latest_run else None) %}
+<main class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">SB</div><div><b>Siskeu BUMDes AI Operator</b><span>Interactive AI Operations Evidence Console</span></div></div>
+    <div class="pills"><span class="pill"><i class="dot"></i>Evidence mode</span><span class="pill">Interactive input</span><span class="pill">Vertex AI Gemini</span><span class="pill">Human approval</span></div>
+  </header>
 
-  {% macro show(v) -%}
-    {% if v is none or v == '' %}<em style="color:#9ca3af">not recorded</em>{% else %}<code>{{ v }}</code>{% endif %}
-  {%- endmacro %}
-
-  <section class="grounding" aria-label="LynkMesh Grounding Layer">
-    <h2>LynkMesh Grounding Layer</h2>
-    <div class="subtitle">Deterministic software/domain context that grounds Gemini explanations.</div>
-
-    <div class="legend">
-      <span><i class="dot dot-blue"></i>blue = deterministic LynkMesh facts</span>
-      <span><i class="dot dot-purple"></i>purple = Gemini generation</span>
-      <span><i class="dot dot-green"></i>green = human approved</span>
-      <span><i class="dot dot-orange"></i>orange = caveat / watch item</span>
-      <span><i class="dot dot-gray"></i>gray = unavailable</span>
+  <section class="hero">
+    <div>
+      <span class="eyebrow">BUILD WITH GEMINI XPRIZE · SMALL BUSINESS SERVICES</span>
+      <h1>AI-assisted monthly closing evidence console for BUMDes.</h1>
+      <p>Edit synthetic BUMDes report inputs, run a Gemini-powered briefing, record LynkMesh context metadata, save an ExecutionLog, and require human approval before final use.</p>
+      <p><small>Public demo uses synthetic/redacted data. The AI does not post ledger entries or make final financial decisions.</small></p>
     </div>
+    <aside class="latest">
+      <div style="font-size:12px;font-weight:900;text-transform:uppercase;color:rgba(255,255,255,.72)">Latest evidence status</div>
+      <div class="big">{{ result_status }}</div>
+      <div style="margin-top:8px;color:rgba(255,255,255,.8);font-size:13px">Latest run {{ code(latest.run_id,8) if latest else 'not recorded' }} for period {{ latest.period if latest else '-' }}.</div>
+      <div class="kv"><span>Gemini model</span><strong>{{ gem.model|default('-',true) }}{% if gem.is_stub %} (stub){% endif %}</strong></div>
+      <div class="kv"><span>Human review</span><strong>{{ review_status }}</strong></div>
+      <div class="kv"><span>LynkMesh pack</span><strong>{{ (lm.context_pack_id|default('-',true)|string)[:12] }}</strong></div>
+    </aside>
+  </section>
 
-    <div class="flow">
-      <div class="node {{ 'blue' if latest_run else 'gray' }}">
-        <div class="role">1 &middot; input</div>
-        <div class="title">Report Input</div>
-        <div class="meta">
-          {% if latest_run %}
-            period {{ show(latest_run.period) }}<br/>
-            tenant {{ show(latest_run.tenant_ref) }}
-          {% else %}no run yet{% endif %}
-        </div>
-      </div>
-      <div class="arrow" aria-hidden="true"></div>
+  <section class="grid kpis">
+    <div class="card"><small>Total runs</small><b>{{summary.total_runs}}</b><div class="hint">All recorded AI Operator runs.</div></div>
+    <div class="card"><small>Succeeded</small><b class="ok">{{summary.succeeded}}</b><div class="hint">Technically successful runs.</div></div>
+    <div class="card"><small>Failed</small><b class="fail">{{summary.failed}}</b><div class="hint">Failed runs remain recorded for audit.</div></div>
+    <div class="card"><small>Human reviewed</small><b>{{summary.reviewed}}</b><div class="hint">Reviewed by a human operator.</div></div>
+    <div class="card"><small>Approved</small><b class="ok">{{summary.approved}}</b><div class="hint">Approved after human review.</div></div>
+    <div class="card"><small>Gemini tokens</small><b>{{summary.total_gemini_tokens}}</b><div class="hint">Total recorded Gemini tokens.</div></div>
+    <div class="card"><small>Live runs</small><b>{{summary.live_runs}}</b><div class="hint">Live Gemini runs.</div></div>
+    <div class="card"><small>Stub runs</small><b>{{summary.stub_runs}}</b><div class="hint">Local/dev stub runs.</div></div>
+  </section>
 
-      <div class="node {{ 'blue' if lm else 'gray' }}">
-        <div class="role">2 &middot; machine-verifiable context: LynkMesh</div>
-        <div class="title">LynkMesh Grounding Layer</div>
-        <div class="meta">
-          pack {{ show((lm.get('context_pack_id') or '')[:12]) }}<br/>
-          {% if lm.get('token_estimate') %}~{{ lm.get('token_estimate') }} tokens{% else %}token estimate {{ show(none) }}{% endif %}
-        </div>
-      </div>
-      <div class="arrow" aria-hidden="true"></div>
-
-      <div class="node {{ 'purple' if gem else 'gray' }}">
-        <div class="role">3 &middot; ai-generated explanation: gemini</div>
-        <div class="title">Gemini Explanation</div>
-        <div class="meta">
-          {% if gem %}
-            model {{ show(gem.get('model')) }}{% if gem.get('is_stub') %} <em style="color:#d97706">(stub)</em>{% endif %}<br/>
-            tokens {{ show(gem.get('total_tokens')) }}
-          {% else %}no Gemini call recorded{% endif %}
-        </div>
-      </div>
-      <div class="arrow" aria-hidden="true"></div>
-
-      <div class="node {{ 'orange' if result_status == 'failed' else ('blue' if latest_run else 'gray') }}">
-        <div class="role">4 &middot; audit trail</div>
-        <div class="title">ExecutionLog</div>
-        <div class="meta">
-          {% if latest_run %}
-            run {{ show((latest_run.run_id or '')[:8]) }}<br/>
-            status
-            {% if result_status == 'succeeded' %}<span class="ok">{{ result_status }}</span>
-            {% elif result_status == 'failed' %}<span class="fail">{{ result_status }}</span>
-            {% else %}<span class="pending">{{ result_status or 'unknown' }}</span>{% endif %}
-          {% else %}—{% endif %}
-        </div>
-      </div>
-      <div class="arrow" aria-hidden="true"></div>
-
-      {% set review_color = 'green' if review_status == 'approved'
-                          else ('orange' if review_status in ('rejected','edited')
-                          else ('blue' if latest_run else 'gray')) %}
-      <div class="node {{ review_color }}">
-        <div class="role">5 &middot; final approval: human operator</div>
-        <div class="title">Human Review</div>
-        <div class="meta">
-          status
-          {% if review_status == 'approved' %}<span class="ok">{{ review_status }}</span>
-          {% elif review_status in ('rejected','edited') %}<span class="fail">{{ review_status }}</span>
-          {% else %}<span class="pending">{{ review_status }}</span>{% endif %}
-        </div>
+  <section class="grid two">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Interactive Report Input</h2><p>The preview updates in real time as you edit. Gemini is only called when you click Run, keeping token usage efficient and the ExecutionLog clean.</p></div></div>
+      <div class="panel-body">
+        <form id="reportForm" class="form">
+          <div class="field"><label>Tenant Ref</label><input name="tenant_ref" value="synthetic-tenant-001"></div>
+          <div class="field"><label>Period</label><input name="period" value="2026-04"></div>
+          <div class="field"><label>Currency</label><input name="currency" value="IDR"></div>
+          <div class="field"><label>Cash Beginning</label><input name="cash_beginning" type="number" value="12000000"></div>
+          <div class="field"><label>Cash Ending</label><input name="cash_ending" type="number" value="17500000"></div>
+          <div class="field"><label>Revenue</label><input name="revenue" type="number" value="45200000"></div>
+          <div class="field"><label>Cost of Goods Sold</label><input name="cost_of_goods_sold" type="number" value="21500000"></div>
+          <div class="field"><label>Operating Expenses</label><input name="operating_expenses" type="number" value="9800000"></div>
+          <div class="field"><label>Previous Net Income</label><input name="prev_month_net_income" type="number" value="11200000"></div>
+          <div class="field"><label>Receivables</label><input name="receivables" type="number" value="7200000"></div>
+          <div class="field"><label>Inventory</label><input name="inventory" type="number" value="12400000"></div>
+          <div class="field"><label>Fixed Assets Net</label><input name="fixed_assets_net" type="number" value="64000000"></div>
+          <div class="field"><label>Payables</label><input name="payables" type="number" value="5400000"></div>
+          <div class="field"><label>Short-Term Debt</label><input name="short_term_debt" type="number" value="8000000"></div>
+          <div class="field"><label>Village Capital</label><input name="village_capital" type="number" value="95000000"></div>
+          <div class="field"><label>Unposted Drafts</label><input name="unposted_drafts" type="number" value="1"></div>
+          <div class="field"><label>Missing Opening Balance</label><input name="missing_opening_balance_accounts" type="number" value="0"></div>
+          <div class="field"><label>Water Unit</label><input name="unit_air_bersih" type="number" value="5200000"></div>
+          <div class="field"><label>Savings &amp; Loan Unit</label><input name="unit_simpan_pinjam" type="number" value="6100000"></div>
+          <div class="field"><label>Village Store Unit</label><input name="unit_toko_desa" type="number" value="2600000"></div>
+          <div class="field full"><label>Notes / Anomaly</label><textarea name="notes">Revenue increased due to the village market business unit. One draft transaction needs posting after treasurer review.</textarea></div>
+        </form>
+        <div class="actions"><button type="button" class="btn btn-primary" id="runBtn">Run Gemini Briefing</button><button type="button" class="btn btn-success" id="approveBtn" disabled>Approve Latest Generated Run</button><button type="button" class="btn btn-secondary" id="reloadBtn">Reload Dashboard</button></div>
+        <div id="resultBox" class="result">No run has been generated from interactive input in this browser session yet.</div>
       </div>
     </div>
 
-    {% if latest_run %}
-      <div class="facts" aria-label="latest run grounding facts">
-        <div><span class="k">context_pack_id</span><span class="v">{{ show((lm.get('context_pack_id') or '')[:24]) }}</span></div>
-        <div><span class="k">graph_id</span><span class="v">{{ show(lm.get('graph_id')) }}</span></div>
-        <div><span class="k">build_id</span><span class="v">{{ show(lm.get('build_id')) }}</span></div>
-        <div><span class="k">schema_version</span><span class="v">{{ show(lm.get('schema_version')) }}</span></div>
-        <div><span class="k">generator_version</span><span class="v">{{ show(lm.get('generator_version')) }}</span></div>
-        <div><span class="k">token_estimate</span><span class="v">{{ show(lm.get('token_estimate')) }}</span></div>
-        <div><span class="k">Gemini model</span><span class="v">{{ show(gem.get('model')) }}</span></div>
-        <div><span class="k">Gemini tokens</span><span class="v">{{ show(gem.get('total_tokens')) }}</span></div>
-        <div><span class="k">run_id (prefix)</span><span class="v">{{ show((latest_run.run_id or '')[:8]) }}</span></div>
-        <div><span class="k">human review</span><span class="v">{{ show(review_status) }}</span></div>
-        <div><span class="k">result status</span><span class="v">{{ show(result_status) }}</span></div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Real-time Local Preview</h2><p>Computed in the browser before Gemini is called. Useful for quickly demonstrating how the figures change.</p></div></div>
+      <div class="panel-body">
+        <div class="preview">
+          <div class="preview-item"><span>Net income</span><b id="pvNet">-</b></div>
+          <div class="preview-item"><span>Cash delta</span><b id="pvCash">-</b></div>
+          <div class="preview-item"><span>Total assets</span><b id="pvAssets">-</b></div>
+          <div class="preview-item"><span>Total liabilities</span><b id="pvLiabilities">-</b></div>
+          <div class="preview-item"><span>Working capital proxy</span><b id="pvWorking">-</b></div>
+          <div class="preview-item"><span>Watch items</span><b id="pvWatch">-</b></div>
+        </div>
       </div>
-    {% else %}
-      <div class="empty">Run the Monthly Report Explanation Assistant to generate a grounding trace.</div>
-    {% endif %}
-
-    <div class="safe-claim">
-      LynkMesh provides deterministic, compact context used to ground this Gemini workflow.
-      Gemini generates the explanation, and a human operator approves the result.
     </div>
   </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>created_at</th><th>agent</th><th>period</th><th>status</th>
-        <th>review</th><th>model</th><th>tokens</th>
-        <th>context_pack_id</th><th>prompt</th><th>run_id</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in runs %}
-      <tr>
-        <td>{{ r.created_at }}</td>
-        <td>{{ r.agent_name }} v{{ r.agent_version }}</td>
-        <td>{{ r.period }}</td>
-        <td class="{{ 'ok' if r.result_status == 'succeeded' else 'fail' }}">{{ r.result_status }}</td>
-        <td class="pending">{{ (r.human_review or {}).get('status', '-') }}</td>
-        <td>{{ (r.gemini or {}).get('model', '-') }}{% if (r.gemini or {}).get('is_stub') %} (stub){% endif %}</td>
-        <td>{{ (r.gemini or {}).get('total_tokens', '-') }}</td>
-        <td><code>{{ (r.lynkmesh or {}).get('context_pack_id', '-')[:16] }}</code></td>
-        <td><code>{{ r.prompt.prompt_id }}.{{ r.prompt.prompt_version }}</code></td>
-        <td><code>{{ r.run_id[:8] }}</code></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <section class="grid boundaries">
+    <h2 style="grid-column:1/-1;margin:4px 0 0;font-size:18px">Operational Boundaries</h2>
+    <div class="card boundary"><small>Deployment</small><strong>Cloud Run MVP</strong><div class="hint">AI Operator service layer, not a full production integration dashboard.</div></div>
+    <div class="card boundary"><small>Gemini mode</small><strong>{% if gem.is_stub %}Stub recorded{% elif gem.model %}Vertex AI Gemini Live{% else %}Awaiting run{% endif %}</strong><div class="hint">Runtime metadata is recorded in the ExecutionLog..</div></div>
+    <div class="card boundary"><small>Data mode</small><strong>Synthetic / redacted</strong><div class="hint">No public BUMDes raw data is exposed.</div></div>
+    <div class="card boundary"><small>Decision boundary</small><strong>Human approval</strong><div class="hint">AI output must be reviewed by a human.</div></div>
+    <div class="card boundary"><small>Ledger posting</small><strong>Disabled</strong><div class="hint">No automatic journal posting.</div></div>
+  </section>
+
+  <section class="panel" style="margin-top:16px">
+    <div class="panel-head"><div><h2>LynkMesh Grounding Layer</h2><p>Evidence flow: report input → LynkMesh context → Gemini → ExecutionLog → human review.</p></div></div>
+    <div class="panel-body">
+      <div class="flow">
+        <div class="node"><div class="role">1 · input</div><div class="title">Report Input</div><div class="meta">Period {{ latest.period if latest else '-' }}<br>Tenant {{ code(latest.tenant_ref,18) if latest else '-' }}<br>Data {{ latest.data_classification if latest else '-' }}</div></div>
+        <div class="arrow"></div>
+        <div class="node"><div class="role">2 · deterministic context</div><div class="title">LynkMesh Context Pack</div><div class="meta">Pack {{ code(lm.context_pack_id,12) }}<br>Schema {{ lm.schema_version|default('-',true) }}<br>Estimate ~{{ lm.token_estimate|default('-',true) }} tokens</div></div>
+        <div class="arrow"></div>
+        <div class="node purple"><div class="role">3 · ai generation</div><div class="title">Gemini Explanation</div><div class="meta">Model {{ gem.model|default('-',true) }}{% if gem.is_stub %} <span class="fail">(stub)</span>{% endif %}<br>Tokens {{ gem.total_tokens|default('-',true) }}<br>Finish {{ gem.finish_reason|default('-',true) }}</div></div>
+        <div class="arrow"></div>
+        <div class="node"><div class="role">4 · audit trail</div><div class="title">ExecutionLog</div><div class="meta">Run {{ code(latest.run_id,8) if latest else '-' }}<br>Status {{ badge(result_status) }}<br>Agent {{ latest.agent_name if latest else '-' }} v{{ latest.agent_version if latest else '-' }}</div></div>
+        <div class="arrow"></div>
+        <div class="node {{ 'green' if review_status == 'approved' else 'amber' }}"><div class="role">5 · final control</div><div class="title">Human Review</div><div class="meta">Status {{ badge(review_status) }}<br>Reviewed at {{ review.reviewed_at|default('not recorded',true) }}<br>Reviewer {{ review.reviewer_ref|default('not recorded',true) }}</div></div>
+      </div>
+      <div class="facts">
+        <div class="fact"><span>context_pack_id</span>{{ code(lm.context_pack_id,28) }}</div><div class="fact"><span>graph_id</span>{{ code(lm.graph_id) }}</div><div class="fact"><span>build_id</span>{{ code(lm.build_id) }}</div><div class="fact"><span>generator_version</span>{{ code(lm.generator_version) }}</div>
+        <div class="fact"><span>prompt</span>{{ code(prompt.prompt_id) }} {{ code(prompt.prompt_version) }}</div><div class="fact"><span>prompt_sha256</span>{{ code(prompt.prompt_sha256,28) }}</div><div class="fact"><span>latency_ms</span>{{ gem.latency_ms|default('-',true) }}</div><div class="fact"><span>run_id</span>{{ code(latest.run_id,36) if latest else '-' }}</div>
+      </div>
+      <div class="safe"><b>Safe claim:</b> this dashboard shows the evidence workflow. LynkMesh provides deterministic, compact context used to ground the Gemini workflow, Gemini generates the briefing, and a human operator approves the final result. This is not a claim of fully autonomous accounting or automatic ledger posting.</div>
+    </div>
+  </section>
+
+  <section class="panel table">
+    <div class="panel-head"><div><h2>ExecutionLog History</h2><p>History of AI Operator runs with Gemini metadata, context pack, prompt, and review status.</p></div>{{ badge(result_status) }}</div>
+    <div class="table-scroll"><table><thead><tr><th>Created</th><th>Agent</th><th>Period</th><th>Status</th><th>Review</th><th>Gemini</th><th>Tokens</th><th>Context Pack</th><th>Prompt</th><th>Run ID</th></tr></thead><tbody>
+      {% for r in runs %}{% set rg=r.gemini if r.gemini else {} %}{% set rl=r.lynkmesh if r.lynkmesh else {} %}{% set rr=r.human_review if r.human_review else {} %}{% set rp=r.prompt if r.prompt else {} %}<tr><td>{{r.created_at}}<span class="sub">{{r.completed_at}}</span></td><td><b>{{r.agent_name}}</b><span class="sub">v {{r.agent_version}}</span></td><td>{{r.period}}</td><td>{{badge(r.result_status)}}</td><td>{{badge(rr.status|default('-',true))}}</td><td><b>{{rg.model|default('-',true)}}</b>{% if rg.is_stub %}<span class="sub">stub mode</span>{% else %}<span class="sub">live/runtime recorded</span>{% endif %}</td><td>{{rg.total_tokens|default('-',true)}}</td><td>{{code(rl.context_pack_id,16)}}</td><td><b>{{rp.prompt_id|default('-',true)}}</b><span class="sub">{{rp.prompt_version|default('-',true)}}</span></td><td>{{code(r.run_id,8)}}</td></tr>{% else %}<tr><td colspan="10">No execution logs yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  <div class="note"><b>Evidence note:</b> This dashboard shows the AI Operator workflow evidence: synthetic report input, LynkMesh context metadata, Gemini runtime metadata, ExecutionLog status, and human review. It does not claim fully autonomous accounting or automatic ledger posting.</div>
+</main>
+
+<script>
+  let lastRunId = null;
+  const form = document.getElementById('reportForm');
+  const resultBox = document.getElementById('resultBox');
+  const runBtn = document.getElementById('runBtn');
+  const approveBtn = document.getElementById('approveBtn');
+  const reloadBtn = document.getElementById('reloadBtn');
+
+  function idr(n){ return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0); }
+  function val(name){ const el=form.elements[name]; return el ? Number(el.value || 0) : 0; }
+  function str(name){ const el=form.elements[name]; return el ? String(el.value || '') : ''; }
+
+  function updatePreview(){
+    const net = val('revenue') - val('cost_of_goods_sold') - val('operating_expenses');
+    const cashDelta = val('cash_ending') - val('cash_beginning');
+    const assets = val('cash_ending') + val('receivables') + val('inventory') + val('fixed_assets_net');
+    const liabilities = val('payables') + val('short_term_debt');
+    const working = val('cash_ending') + val('receivables') + val('inventory') - val('payables');
+    const watch = val('unposted_drafts') + val('missing_opening_balance_accounts');
+    document.getElementById('pvNet').textContent = idr(net);
+    document.getElementById('pvCash').textContent = idr(cashDelta);
+    document.getElementById('pvAssets').textContent = idr(assets);
+    document.getElementById('pvLiabilities').textContent = idr(liabilities);
+    document.getElementById('pvWorking').textContent = idr(working);
+    document.getElementById('pvWatch').textContent = watch + ' items';
+  }
+
+  function payload(){
+    const data = {};
+    for (const el of form.elements) {
+      if (!el.name) continue;
+      data[el.name] = el.type === 'number' ? Number(el.value || 0) : el.value;
+    }
+    return data;
+  }
+
+  async function runGemini(){
+    runBtn.disabled = true; approveBtn.disabled = true;
+    resultBox.innerHTML = '<span class="loading">Running Gemini briefing... please wait a moment.</span>';
+    try {
+      const res = await fetch('/agents/report-explanation/run-custom', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload())
+      });
+      const json = await res.json();
+      if (!res.ok || json.error) throw new Error(json.error || ('HTTP '+res.status));
+      lastRunId = json.run_id;
+      approveBtn.disabled = false;
+      const gem = json.gemini || {};
+      const briefing = json.briefing || {};
+      resultBox.textContent = JSON.stringify({
+        run_id: json.run_id,
+        result_status: json.result_status,
+        gemini_model: gem.model,
+        is_stub: gem.is_stub,
+        tokens: gem.total_tokens,
+        lynkmesh_context_pack_id: json.lynkmesh_context_pack_id,
+        briefing: briefing
+      }, null, 2);
+    } catch (err) {
+      resultBox.innerHTML = '<span class="fail">Run failed: '+err.message+'</span>';
+    } finally {
+      runBtn.disabled = false;
+    }
+  }
+
+  async function approveRun(){
+    if (!lastRunId) return;
+    approveBtn.disabled = true;
+    try {
+      const res = await fetch('/runs/'+lastRunId+'/review', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({status:'approved', reviewer_ref:'demo-operator', notes:'Approved from interactive dashboard demo.'})
+      });
+      const json = await res.json();
+      if (!res.ok || json.error) throw new Error(json.error || ('HTTP '+res.status));
+      resultBox.textContent = resultBox.textContent + '\n\nHuman review updated: approved. Reloading dashboard...';
+      setTimeout(()=>location.reload(), 900);
+    } catch (err) {
+      resultBox.innerHTML = '<span class="fail">Approve failed: '+err.message+'</span>';
+      approveBtn.disabled = false;
+    }
+  }
+
+  form.addEventListener('input', updatePreview);
+  runBtn.addEventListener('click', runGemini);
+  approveBtn.addEventListener('click', approveRun);
+  reloadBtn.addEventListener('click', () => location.reload());
+  updatePreview();
+</script>
 </body>
 </html>

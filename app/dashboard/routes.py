@@ -13,28 +13,12 @@ templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "tem
 
 def _summary(store) -> dict:
     runs = store.list_runs(limit=1000)
-
-    reviewed = [
-        r for r in runs
-        if (r.get("human_review") or {}).get("status") in ("approved", "rejected", "edited")
-    ]
-
-    approved = [
-        r for r in reviewed
-        if (r.get("human_review") or {}).get("status") == "approved"
-    ]
-
-    total_tokens = sum(
-        (r.get("gemini") or {}).get("total_tokens", 0)
-        for r in runs
-    )
-
-    packs = {
-        (r.get("lynkmesh") or {}).get("context_pack_id")
-        for r in runs
-        if r.get("lynkmesh")
-    }
-
+    reviewed = [r for r in runs if (r.get("human_review") or {}).get("status") in ("approved", "rejected", "edited")]
+    approved = [r for r in reviewed if (r.get("human_review") or {}).get("status") == "approved"]
+    total_tokens = sum((r.get("gemini") or {}).get("total_tokens", 0) for r in runs)
+    live_runs = [r for r in runs if not (r.get("gemini") or {}).get("is_stub", True)]
+    stub_runs = [r for r in runs if (r.get("gemini") or {}).get("is_stub", False)]
+    packs = {(r.get("lynkmesh") or {}).get("context_pack_id") for r in runs if r.get("lynkmesh")}
     return {
         "total_runs": len(runs),
         "succeeded": sum(1 for r in runs if r.get("result_status") == "succeeded"),
@@ -44,6 +28,8 @@ def _summary(store) -> dict:
         "approval_rate": (len(approved) / len(reviewed)) if reviewed else None,
         "total_gemini_tokens": total_tokens,
         "distinct_context_packs": len([p for p in packs if p]),
+        "live_runs": len(live_runs),
+        "stub_runs": len(stub_runs),
     }
 
 
@@ -66,15 +52,12 @@ def api_summary(request: Request):
 def dashboard(request: Request):
     store = request.app.state.store
     runs = store.list_runs(limit=100)
-    summary = _summary(store)
-    latest_run = runs[0] if runs else None
-
     return templates.TemplateResponse(
-        request,
         "dashboard.html",
         {
+            "request": request,
             "runs": runs,
-            "summary": summary,
-            "latest_run": latest_run,
+            "latest_run": runs[0] if runs else None,
+            "summary": _summary(store),
         },
     )
