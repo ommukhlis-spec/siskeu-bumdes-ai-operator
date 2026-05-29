@@ -27,6 +27,22 @@ from app.gemini.prompts.registry import get_prompt
 from app.siskeu.redact import redact_report
 
 
+
+def _strip_json_fence(text: str | None) -> str:
+    """Strip markdown JSON fences like ```json ... ``` before json.loads."""
+    cleaned = (text or "").strip()
+    fence = "`" * 3
+
+    if cleaned.startswith(fence):
+        lines = cleaned.splitlines()
+        if len(lines) >= 2 and lines[-1].strip() == fence:
+            first = lines[0].strip().lower()
+            if first in {fence, fence + "json"}:
+                return "\n".join(lines[1:-1]).strip()
+
+    return cleaned
+
+
 def _truthy(v: str | None) -> bool:
     return str(v or "").strip().lower() in {"1", "true", "yes", "y", "on"}
 
@@ -206,7 +222,9 @@ class ReportExplainerAgent(Agent):
         text = text or ""
 
         try:
-            parsed = json.loads(text)
+            parsed = json.loads(_strip_json_fence(text))
+            if isinstance(parsed, dict):
+                parsed.setdefault("parse_error", False)
             if isinstance(parsed, dict):
                 return parsed
             return {"raw": parsed, "parse_error": False}
