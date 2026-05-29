@@ -1,9 +1,9 @@
 ﻿{
-    "run_id":  "7b8bfb1c-9e07-4188-9c88-b7c5f4f12834",
+    "run_id":  "11510ffb-3b2a-4ce6-adcd-3a0cf47c79a1",
     "agent_name":  "report_explainer",
     "agent_version":  "1.1.1",
-    "created_at":  "2026-05-29T04:35:10.051359Z",
-    "completed_at":  "2026-05-29T04:35:18.401228Z",
+    "created_at":  "2026-05-29T06:14:44.751488Z",
+    "completed_at":  "2026-05-29T06:14:53.753986Z",
     "tenant_ref":  "sha256:b7485cf8831fb184",
     "period":  "2026-04",
     "input_summary":  "Explain 2026-04 monthly report from configured report source",
@@ -24,25 +24,25 @@
                },
     "gemini":  {
                    "model":  "gemini-2.5-flash",
-                   "response_id":  "gBcZasfXHtLYk7QPjr-dwAY",
+                   "response_id":  "1y4ZaoypB72Pk7QPzdfDsAY",
                    "finish_reason":  "STOP",
                    "prompt_tokens":  1165,
-                   "candidates_tokens":  271,
-                   "total_tokens":  2915,
-                   "latency_ms":  6221,
+                   "candidates_tokens":  253,
+                   "total_tokens":  3035,
+                   "latency_ms":  6963,
                    "temperature":  0.2,
                    "is_stub":  false
                },
     "cost_estimate_usd":  null,
     "artifacts":  {
-                      "prompt_ref":  "data/runs/7b8bfb1c-9e07-4188-9c88-b7c5f4f12834/prompt.txt",
-                      "redacted_report_ref":  "data/runs/7b8bfb1c-9e07-4188-9c88-b7c5f4f12834/report_redacted.json",
-                      "gemini_response_ref":  "data/runs/7b8bfb1c-9e07-4188-9c88-b7c5f4f12834/response.txt"
+                      "prompt_ref":  "data/runs/11510ffb-3b2a-4ce6-adcd-3a0cf47c79a1/prompt.txt",
+                      "redacted_report_ref":  "data/runs/11510ffb-3b2a-4ce6-adcd-3a0cf47c79a1/report_redacted.json",
+                      "gemini_response_ref":  "data/runs/11510ffb-3b2a-4ce6-adcd-3a0cf47c79a1/response.txt"
                   },
     "human_review":  {
                          "status":  "approved",
                          "reviewer_ref":  "xprize-demo-operator",
-                         "reviewed_at":  "2026-05-29T04:35:36.883044+00:00",
+                         "reviewed_at":  "2026-05-29T06:39:54.106742+00:00",
                          "notes":  "Approved after parser fix. Cloud Run live Gemini evidence. Synthetic data only."
                      },
     "result_status":  "succeeded",
