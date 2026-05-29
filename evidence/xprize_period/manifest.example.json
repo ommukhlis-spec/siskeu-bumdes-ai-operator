@@ -1,16 +1,35 @@
 {
-  "category": "revenue_xprize",
-  "offer": "AI-Assisted Monthly Closing & Report Briefing (pilot/add-on)",
+  "evidence_type": "xprize_period_revenue",
+  "project": "Siskeu BUMDes AI Operator",
+  "offer_name": "AI-Assisted Monthly Closing & Report Briefing",
   "counts_as_xprize_revenue": true,
-  "arms_length": true,
-  "window_dated": true,
-  "currency": "IDR",
-  "items": [
-    {"type": "pilot_agreement", "file": "pilot_agreement/agreement_redacted.pdf", "date": "2026-XX-XX"},
-    {"type": "invoice", "file": "invoice/inv_001.pdf", "date": "2026-XX-XX"},
-    {"type": "bank_transfer_proof", "file": "bank_transfer_proof/transfer_redacted.png", "date": "2026-XX-XX"},
-    {"type": "customer", "file": "customer/customer.json", "redaction_status": "redacted"}
+  "status": "pending_payment_or_replace_with_actual_status",
+  "revenue_month": "YYYY-MM",
+  "invoice": {
+    "invoice_number": "INV-SBAIO-YYYYMM-001",
+    "invoice_date": "YYYY-MM-DD",
+    "amount": "IDR_or_USD_amount",
+    "currency": "IDR",
+    "public_copy": "redacted",
+    "private_copy_location": "private_evidence/xprize_period/invoice/"
+  },
+  "payment": {
+    "payment_status": "pending_or_paid",
+    "payment_date": "YYYY-MM-DD",
+    "payment_method": "bank_transfer_or_other",
+    "proof_public_copy": "redacted",
+    "proof_private_location": "private_evidence/xprize_period/bank_transfer_proof/"
+  },
+  "customer": {
+    "customer_type": "BUMDes_or_related_small_business",
+    "customer_identity_public": "redacted_or_public_with_permission",
+    "related_party": "yes_no_tbd",
+    "public_testimonial_permission": "yes_no_tbd"
+  },
+  "linked_agent_run_ids": [
+    "replace-with-approved-run-id"
   ],
-  "linked_run_ids": [],
-  "notes": "Tie this to real Agent-4 run_ids delivered to the pilot client."
+  "human_review_required": true,
+  "human_review_status": "approved_or_pending",
+  "notes": "Replace placeholders. Do not commit unredacted customer/payment data."
 }
