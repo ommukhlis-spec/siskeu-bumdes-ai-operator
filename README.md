@@ -1,4 +1,4 @@
-# Siskeu BUMDes AI Operator
+﻿# Siskeu BUMDes AI Operator
 
 Siskeu BUMDes AI Operator is a newly created AI-operated service layer built for the Build with Gemini XPRIZE. It runs on top of the pre-existing Siskeu BUMDes financial administration foundation and uses Gemini on Google Cloud to explain synthetic or redacted BUMDes monthly reports with a human-review safety boundary.
 
@@ -6,9 +6,9 @@ Siskeu BUMDes AI Operator is a newly created AI-operated service layer built for
 
 This repository separates three layers clearly:
 
-* **Siskeu BUMDes** — pre-existing BUMDes financial administration foundation and real-world domain context.
-* **LynkMesh** — pre-existing deterministic context infrastructure and technical moat.
-* **Siskeu BUMDes AI Operator** — newly created XPRIZE service layer that injects LynkMesh context into Gemini, runs evidence-logged AI workflows, and requires human review before final financial use.
+* **Siskeu BUMDes** â€” pre-existing BUMDes financial administration foundation and real-world domain context.
+* **LynkMesh** â€” pre-existing deterministic context infrastructure and technical moat.
+* **Siskeu BUMDes AI Operator** â€” newly created XPRIZE service layer that injects LynkMesh context into Gemini, runs evidence-logged AI workflows, and requires human review before final financial use.
 
 The first implemented workflow is:
 
@@ -392,3 +392,4 @@ Docker
 Jinja2
 Pydantic
 ```
+
